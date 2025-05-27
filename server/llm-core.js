@@ -78,15 +78,35 @@ export async function generateSql(question) {
   return stripFences(result);
 }
 
+const explanationPrompt = PromptTemplate.fromTemplate(`
+You are a SQL instructor. Based on the table schema, the question and the SQL query below, help me understand how to write the SQL query step by step.
+
+{schema}
+
+Question: {question}
+SQL Query: {sql}
+Explain how to write the SQL query step by step, using human language.
+`);
+
+const explanationChain = RunnableSequence.from([
+  RunnablePassthrough.assign({
+    schema: async () => db.getTableInfo(),
+    question: (input) => input.question,
+    sql: (input) => stripFences(input.sql),
+  }),
+  explanationPrompt,
+  model,
+  new StringOutputParser(),
+]);
+
 /**
  * explainSql(sql: string) => Promise<string>
  * Returns a human-language, step-by-step explanation of how to write the given SQL query.
  */
-// export async function explainSql(sql) {
-//   const result = await explanationChain.invoke({ sql });
-//   return result;
-// }
-
+export async function explainSql(question,sql) {
+  const result = await explanationChain.invoke({ question,sql });
+  return result;
+}
 
 
 // 5) Smoke-test

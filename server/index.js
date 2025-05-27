@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import { generateSql } from './llm-core.js';
+import { generateSql, explainSql } from './llm-core.js';
 
 dotenv.config();
 
@@ -34,9 +34,12 @@ app.post('/api/query', async (req, res) => {
     // Call the generateSql function to process the question
     const sqlQuery = await generateSql(question);
     console.log('Generated SQL query:', sqlQuery);
+
+    const explanation = await explainSql(question, sqlQuery);
+    console.log('Generated explanation:', explanation);
     
     // Respond with the generated SQL query
-    res.status(200).json({ sqlQuery });
+    res.status(200).json({ explanation });
   } 
   catch (error) {
     console.error('Error processing query:', error);

@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import styles from './index.module.css'
 import sqlLogo from './assets/sql-server.png'
 import geminiLogo from './assets/gemini.png'
 
 function App() {
   const [query, setQuery] = useState('')
-  const [sqlQuery, setSqlQuery] = useState('')
+  const [explanation, setExplanation] = useState('')
   const [error, setError] = useState(null)
 
   const onSubmit = async (e) => {
@@ -16,12 +18,16 @@ function App() {
       const response = await axios.post('http://localhost:8080/api/query', {
         question: query,
       })
-      setSqlQuery(response.data.sqlQuery)     // ← grab the SQL from the JSON payload
+      setExplanation(response.data.explanation)
     } catch (err) {
       console.error(err)
       setError('Failed to generate SQL.')
     }
   }
+
+  useEffect(() => {
+    console.log('Explanation updated:', explanation)
+  }, [explanation])
 
   return (
     <main className={styles.main}>
@@ -43,12 +49,20 @@ function App() {
       </form>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {sqlQuery && (
-        <div style={{ marginTop: '1rem', textAlign: 'left' }}>
-          <h4>Generated SQL:</h4>
-          <pre>{sqlQuery}</pre>
+
+      {explanation && (
+        <div className={styles.queryOutputContainer}>
+          <div className={styles.queryOutput}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {explanation}
+            </ReactMarkdown>
+          </div>
+          <div className={styles.queryOutput}>
+            <p>Table Goes here</p>
+          </div>
         </div>
       )}
+
     </main>
   )
 }

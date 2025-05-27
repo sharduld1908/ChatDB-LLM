@@ -32,7 +32,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 60px;
 }
 
 .main .icon {
@@ -83,14 +82,26 @@ body {
     margin-top: 40px;
 }
 
+.queryOutputContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;  
+  width: 100%; /* full width of the parent */
+}
+
 .queryOutput {
-    max-width: 90%; /* Adjust based on your layout */
-    min-width: 90%;
-    overflow: auto; /* Adds scrollbars when content overflows */
-    background-color: #f4f4f4; /* Light grey background */
-    border: 1px solid #ccc; /* Light grey border */
-    padding: 10px;
-    margin-top: 20px;
-    white-space: pre-wrap; /* Ensures that data wraps within container */
-    word-break: break-all; /* Ensures long strings do not overflow */
+  /* make it scrollable */
+  max-height: 400px;    
+  width: 50%;           /* or whatever fits your layout */
+  overflow-y: auto;               /* vertical scrollbar when needed */
+  overflow-x: hidden;             /* hide horizontal scrollbar */
+
+  /* box look & feel */
+  background-color: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+
+  /* padding inside the box */
+  padding: 16px 12px;             /* a bit tighter than before */
+  margin-top: 20px;
 }
