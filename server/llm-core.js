@@ -27,7 +27,7 @@ const model = new ChatGoogleGenerativeAI({
 // 2) Initialize TypeORM + wrap in SqlDatabase
 const datasource = new DataSource({
   type: 'sqlite',
-  database: 'Chinook.db',
+  database: './data/Chinook.db',
 });
 await datasource.initialize();
 
