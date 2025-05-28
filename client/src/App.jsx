@@ -7,6 +7,9 @@ import styles from './index.module.css'
 import sqlLogo from './assets/sql-server.png'
 import geminiLogo from './assets/gemini.png'
 
+// 👇 read from VITE_-prefixed var
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080'
+ 
 function App() {
   const [query, setQuery] = useState('')
   const [explanation, setExplanation] = useState('')
@@ -18,7 +21,7 @@ function App() {
     e.preventDefault()
     setError(null)
     try {
-      const response = await axios.post('http://localhost:8080/api/query', {
+      const response = await axios.post(`${SERVER_URL}/api/query`, {
         question: query,
       });
       setSqlQuery(response.data.sqlQuery)
@@ -34,7 +37,7 @@ function App() {
       if (sqlQuery) {
         try {
           console.log('Executing SQL query:', sqlQuery);
-          const response = await axios.post('http://localhost:8080/api/data', {
+          const response = await axios.post(`${SERVER_URL}/api/data`, {
             sql: sqlQuery,
           });
           setSqlData(JSON.parse(response.data.result));
