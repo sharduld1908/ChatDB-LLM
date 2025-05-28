@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import DataTable from './Datatable'
 import axios from 'axios'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -9,6 +10,8 @@ import geminiLogo from './assets/gemini.png'
 function App() {
   const [query, setQuery] = useState('')
   const [explanation, setExplanation] = useState('')
+  const [sqlData, setSqlData] = useState(null)
+  const [sqlQuery, setSqlQuery] = useState('')
   const [error, setError] = useState(null)
 
   const onSubmit = async (e) => {
@@ -17,7 +20,8 @@ function App() {
     try {
       const response = await axios.post('http://localhost:8080/api/query', {
         question: query,
-      })
+      });
+      setSqlQuery(response.data.sqlQuery)
       setExplanation(response.data.explanation)
     } catch (err) {
       console.error(err)
@@ -26,8 +30,31 @@ function App() {
   }
 
   useEffect(() => {
-    console.log('Explanation updated:', explanation)
-  }, [explanation])
+    const executeQuery = async () => {
+      if (sqlQuery) {
+        try {
+          console.log('Executing SQL query:', sqlQuery);
+          const response = await axios.post('http://localhost:8080/api/data', {
+            sql: sqlQuery,
+          });
+          setSqlData(JSON.parse(response.data.result));
+          console.log('SQL execution result:', response.data.result);
+        } catch (error) {
+          console.error('Error executing SQL query:', error);
+        }
+      } else {
+        console.log('No SQL query to execute.');
+      }
+    };
+
+    executeQuery();
+  }, [sqlQuery]);
+
+  useEffect(() => {
+    console.log('SQL Data updated:', sqlData);
+    console.log('Type of sqlData:', typeof sqlData);
+  }
+  , [sqlData]);
 
   return (
     <main className={styles.main}>
@@ -58,7 +85,7 @@ function App() {
             </ReactMarkdown>
           </div>
           <div className={styles.queryOutput}>
-            <p>Table Goes here</p>
+            <DataTable data={sqlData} />
           </div>
         </div>
       )}

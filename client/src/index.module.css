@@ -15,9 +15,17 @@
     font-style: normal;
 }
 
-body {
-  /* subtle light grey */
+html, body {
+  height: 100%;      /* so that 100vh really ≈ full viewport */
+  margin: 0;
   background-color: #dcdcdc;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;     /* fill the viewport top-to-bottom */
 }
 
 .main,
@@ -38,6 +46,7 @@ body {
     width: 60px;
     margin-left: 10px;
     margin-right: 10px;
+    margin-top: 20px;
 }
 
 .main h3 {
@@ -82,26 +91,25 @@ body {
     margin-top: 40px;
 }
 
+/* Now the container that should fill the “rest”: */
 .queryOutputContainer {
   display: flex;
-  flex-direction: row;
-  align-items: center;  
-  width: 100%; /* full width of the parent */
+  flex: 1 1 auto;    /* grow to fill leftover space */
+  width: 100%;       /* or whatever max width you want */
+  align-items: stretch; /* so children can stretch vertically */
 }
 
+/* And YOUR scrollable output box: */
 .queryOutput {
-  /* make it scrollable */
-  max-height: 400px;    
-  width: 50%;           /* or whatever fits your layout */
-  overflow-y: auto;               /* vertical scrollbar when needed */
-  overflow-x: hidden;             /* hide horizontal scrollbar */
-
-  /* box look & feel */
+  flex: 1 1 auto;    /* take all remaining height in the container */
+  min-height: 0;     /* ⚠️ allows it to actually shrink below its content */
+  overflow-y: auto;
+  width: 50%;
+  
+  /* keep your “box” styling: */
   background-color: #f4f4f4;
   border: 1px solid #ccc;
   border-radius: 6px;
-
-  /* padding inside the box */
-  padding: 16px 12px;             /* a bit tighter than before */
-  margin-top: 20px;
+  padding: 20px 50px;
+  margin: 30px;
 }

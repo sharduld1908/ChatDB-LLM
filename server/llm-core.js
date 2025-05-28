@@ -108,6 +108,11 @@ export async function explainSql(question,sql) {
   return result;
 }
 
+export async function runSQLStatement(sql) {
+  const rows = await db.run(stripFences(sql));
+  return rows;
+}
+
 
 // 5) Smoke-test
 // async function testShowAllArtists() {

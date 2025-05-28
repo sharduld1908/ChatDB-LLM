@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import { generateSql, explainSql } from './llm-core.js';
+import { generateSql, explainSql, runSQLStatement } from './llm-core.js';
 
 dotenv.config();
 
@@ -39,7 +39,31 @@ app.post('/api/query', async (req, res) => {
     console.log('Generated explanation:', explanation);
     
     // Respond with the generated SQL query
-    res.status(200).json({ explanation });
+    res.status(200).json({ sqlQuery, explanation });
+  } 
+  catch (error) {
+    console.error('Error processing query:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Example route for handling SQL queries
+app.post('/api/data', async (req, res) => {
+  const { sql } = req.body;
+
+  if (!sql) {
+    return res.status(400).json({ error: 'SQL is required' });
+  }
+
+  try {
+    console.log('Received SQL:', sql);
+
+    // Call the runSQLStatement function to execute the SQL
+    const result = await runSQLStatement(sql);
+    console.log('SQL execution result:', result);
+    
+    // Respond with the generated SQL query
+    res.status(200).json({ result });
   } 
   catch (error) {
     console.error('Error processing query:', error);
